@@ -146,6 +146,7 @@ found:
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
 
+  p->tracemask = 0; 
   return p;
 }
 
@@ -322,6 +323,8 @@ fork(void)
   np->state = RUNNABLE;
   release(&np->lock);
 
+  np->tracemask = p->tracemask;
+  
   return pid;
 }
 
@@ -685,4 +688,17 @@ procdump(void)
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
   }
+}
+
+
+uint64
+count_proc(void) {
+  struct proc *p;
+  uint64 count = 0;
+  for(p = proc; p < &proc[NPROC]; p++) {
+    if(p->state != UNUSED) {
+      count += 1;
+    }
+  }
+  return count;
 }

@@ -1,0 +1,6 @@
+usertrap()
+0x7, syscall numbers
+usermode
+80002050:	00002683          	lw	a3,0(zero) # 0 <_entry-0x80000000>, a3
+Load page fault
+"initcode\000\000\000\000\000\000\000", pid = 0x1
