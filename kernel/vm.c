@@ -223,7 +223,7 @@ uvmfirst(pagetable_t pagetable, uchar *src, uint sz)
     panic("uvmfirst: more than a page");
   mem = kalloc();
   memset(mem, 0, PGSIZE);
-  mappages(pagetable, 0, PGSIZE, (uint64)mem, PTE_W|PTE_R|PTE_X|PTE_U);
+  mappages(pagetable, 0, PGSIZE, (uint64)mem, PTE_W|PTE_R|PTE_X|PTE_U);  /////////////////////////
   memmove(mem, src, sz);
 }
 
@@ -271,6 +271,25 @@ uvmdealloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz)
   }
 
   return newsz;
+}
+
+void
+vmprint(pagetable_t pagetable, int level)
+{
+  if(level == 0)
+    return;
+  if(level == 3)
+    printf("page table %p\n", pagetable);
+  for(int i = 0; i < 512; i++){
+    pte_t pte = pagetable[i];
+    if(pte & PTE_V){
+      for(int j = 0; j <= 3-level; j++)
+        printf(" ..");
+      printf("%d: pte %p pa %p\n", i, pte, PTE2PA(pte));
+      if (level > 1)
+        vmprint((pagetable_t)PTE2PA(pte), level-1);
+    }
+  }
 }
 
 // Recursively free page-table pages.

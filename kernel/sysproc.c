@@ -74,7 +74,22 @@ sys_sleep(void)
 int
 sys_pgaccess(void)
 {
-  // lab pgtbl: your code here.
+  uint64 base; argaddr(0, &base);
+  int len; argint(1, &len);
+  uint64 mask; argaddr(2, &mask);
+
+  struct proc *p = myproc();
+  pagetable_t pagetable = p->pagetable;
+  vmprint(pagetable, 3);
+  uint64 res = 0;
+  for(int i = 0; i < len; i++){
+    pte_t* pte = walk(pagetable, base + PGSIZE * i, 0);
+    if(*pte & PTE_A){
+        *pte -= PTE_A;
+        res += 1 << i;
+    }
+  }
+  copyout(pagetable, mask, (char*)&res, sizeof(uint64));
   return 0;
 }
 #endif

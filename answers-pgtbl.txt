@@ -1,0 +1,1 @@
+Anything that doesn't involve memory allocation should work, such as uptime, and the memory page USYSCALL is enough to put a lot of data in, you just need to add the assignment logic.
